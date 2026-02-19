@@ -1,0 +1,1528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Mishika Chhabra — Technical Writer</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Instrument+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+/* ── Reset & Variables ───────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --ink: #0a0a0a;
+  --paper: #f5f0e8;
+  --cream: #ede8dc;
+  --gold: #c9a84c;
+  --gold-light: #e2c97e;
+  --rust: #b5451b;
+  --slate: #2a2a2a;
+  --mist: #6b6560;
+  --rule: #c8c0b0;
+  --white: #faf8f4;
+  --ff-head: 'Playfair Display', Georgia, serif;
+  --ff-body: 'Instrument Sans', sans-serif;
+  --ff-mono: 'JetBrains Mono', monospace;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--ff-body);
+  font-size: 16px;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+
+/* ── Noise overlay ───────────────────────────────────────────────────── */
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 1000;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  opacity: 0.35;
+}
+
+/* ── Scrollbar ───────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--ink); }
+::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 2px; }
+
+/* ── Utility ─────────────────────────────────────────────────────────── */
+.container { max-width: 1200px; margin: 0 auto; padding: 0 40px; }
+.serif { font-family: var(--ff-head); }
+.mono { font-family: var(--ff-mono); }
+.gold { color: var(--gold); }
+.rust { color: var(--rust); }
+.mist { color: var(--mist); }
+
+.section-label {
+  font-family: var(--ff-mono);
+  font-size: 10px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--gold);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 48px;
+}
+.section-label::before {
+  content: '';
+  display: block;
+  width: 32px;
+  height: 1px;
+  background: var(--gold);
+}
+
+hr.rule {
+  border: none;
+  border-top: 1px solid #2a2520;
+  margin: 0;
+}
+
+/* ── Animations ──────────────────────────────────────────────────────── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes slideLeft {
+  from { opacity: 0; transform: translateX(40px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes drawLine {
+  from { width: 0; }
+  to   { width: 100%; }
+}
+@keyframes marqueScroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.4; }
+}
+
+.anim-fade-up   { animation: fadeUp  0.8s cubic-bezier(0.22,1,0.36,1) both; }
+.anim-fade-in   { animation: fadeIn  0.9s ease both; }
+.anim-slide-left{ animation: slideLeft 0.8s cubic-bezier(0.22,1,0.36,1) both; }
+
+/* ── NAV ─────────────────────────────────────────────────────────────── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 900;
+  padding: 20px 40px;
+  display: flex; justify-content: space-between; align-items: center;
+  background: linear-gradient(to bottom, rgba(10,10,10,0.98), rgba(10,10,10,0));
+  backdrop-filter: blur(2px);
+}
+.nav-logo {
+  font-family: var(--ff-head);
+  font-style: italic;
+  font-size: 18px;
+  color: var(--paper);
+  letter-spacing: 0.5px;
+  text-decoration: none;
+}
+.nav-logo span { color: var(--gold); }
+.nav-links {
+  display: flex; gap: 36px; list-style: none;
+}
+.nav-links a {
+  font-family: var(--ff-mono);
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--mist);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--gold); }
+
+/* ── HERO ─────────────────────────────────────────────────────────────── */
+#hero {
+  min-height: 100vh;
+  display: grid;
+  grid-template-rows: 1fr auto;
+  padding-top: 100px;
+  position: relative;
+  overflow: hidden;
+}
+.hero-bg-text {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: var(--ff-head);
+  font-size: clamp(80px, 15vw, 200px);
+  font-weight: 900;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(201,168,76,0.08);
+  white-space: nowrap;
+  pointer-events: none;
+  user-select: none;
+  letter-spacing: -4px;
+}
+.hero-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: end;
+  padding: 0 40px 80px;
+  gap: 60px;
+  position: relative;
+  z-index: 2;
+}
+.hero-eyebrow {
+  font-family: var(--ff-mono);
+  font-size: 10px;
+  letter-spacing: 5px;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-bottom: 24px;
+  animation: fadeUp 0.6s ease both;
+}
+.hero-name {
+  font-family: var(--ff-head);
+  font-size: clamp(52px, 6vw, 86px);
+  font-weight: 900;
+  line-height: 0.95;
+  letter-spacing: -2px;
+  color: var(--paper);
+  animation: fadeUp 0.7s 0.1s ease both;
+}
+.hero-name em {
+  font-style: italic;
+  color: var(--gold);
+  display: block;
+}
+.hero-title-bar {
+  margin-top: 28px;
+  padding-top: 24px;
+  border-top: 1px solid #2a2520;
+  animation: fadeUp 0.7s 0.2s ease both;
+}
+.hero-role {
+  font-family: var(--ff-mono);
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--mist);
+}
+.hero-right {
+  animation: slideLeft 0.8s 0.3s ease both;
+}
+.hero-intro {
+  font-size: 17px;
+  line-height: 1.75;
+  color: #8a8278;
+  margin-bottom: 40px;
+}
+.hero-intro strong { color: var(--paper); font-weight: 500; }
+.hero-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: #1e1c18;
+  border: 1px solid #1e1c18;
+}
+.hero-stat {
+  background: #0e0d0b;
+  padding: 20px 16px;
+  text-align: center;
+}
+.hero-stat-num {
+  font-family: var(--ff-head);
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--gold);
+  display: block;
+  line-height: 1;
+}
+.hero-stat-label {
+  font-family: var(--ff-mono);
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--mist);
+  margin-top: 6px;
+  display: block;
+}
+
+/* Marquee ticker */
+.ticker-wrap {
+  border-top: 1px solid #1e1c18;
+  border-bottom: 1px solid #1e1c18;
+  padding: 14px 0;
+  overflow: hidden;
+  background: #080807;
+}
+.ticker-track {
+  display: flex;
+  gap: 0;
+  animation: marqueScroll 22s linear infinite;
+  white-space: nowrap;
+}
+.ticker-item {
+  font-family: var(--ff-mono);
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: #3a3630;
+  padding: 0 40px;
+  flex-shrink: 0;
+}
+.ticker-item span { color: var(--gold); margin-right: 40px; }
+
+/* ── ABOUT ───────────────────────────────────────────────────────────── */
+#about {
+  padding: 120px 0;
+  border-bottom: 1px solid #1a1814;
+}
+.about-grid {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 80px;
+  align-items: start;
+}
+.about-sidebar {}
+.about-sidebar-label {
+  font-family: var(--ff-mono);
+  font-size: 9px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 20px;
+}
+.tag-cloud { display: flex; flex-wrap: wrap; gap: 8px; }
+.tag {
+  font-family: var(--ff-mono);
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  padding: 5px 10px;
+  border: 1px solid #2a2520;
+  color: var(--mist);
+  transition: all 0.2s;
+  cursor: default;
+}
+.tag:hover { border-color: var(--gold); color: var(--gold); }
+.tag.highlight { border-color: var(--gold); color: var(--gold); }
+
+.about-main {}
+.about-heading {
+  font-family: var(--ff-head);
+  font-size: clamp(36px, 4vw, 56px);
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--paper);
+  margin-bottom: 28px;
+}
+.about-heading em { font-style: italic; color: var(--gold); }
+.about-text {
+  font-size: 16px;
+  color: #7a7570;
+  line-height: 1.85;
+  margin-bottom: 16px;
+}
+.about-text strong { color: var(--paper); font-weight: 500; }
+.about-pull {
+  font-family: var(--ff-head);
+  font-size: 22px;
+  font-style: italic;
+  color: #4a4540;
+  border-left: 2px solid var(--gold);
+  padding-left: 24px;
+  margin: 36px 0;
+  line-height: 1.5;
+}
+
+/* ── CASE STUDIES ────────────────────────────────────────────────────── */
+#case-studies { padding: 120px 0; }
+.case-header {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: end;
+  margin-bottom: 64px;
+}
+.section-heading {
+  font-family: var(--ff-head);
+  font-size: clamp(40px, 5vw, 64px);
+  font-weight: 900;
+  line-height: 1.0;
+  color: var(--paper);
+}
+.section-heading em { font-style: italic; color: var(--gold); display: block; }
+.section-count {
+  font-family: var(--ff-mono);
+  font-size: 60px;
+  font-weight: 300;
+  color: #1e1c18;
+  line-height: 1;
+  letter-spacing: -2px;
+}
+
+/* Case study cards */
+.case-card {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  border-top: 1px solid #1e1c18;
+  padding: 52px 0;
+  gap: 60px;
+  transition: background 0.3s;
+  position: relative;
+}
+.case-card::before {
+  content: '';
+  position: absolute;
+  left: -40px; right: -40px; top: 0; bottom: 0;
+  background: transparent;
+  transition: background 0.3s;
+  pointer-events: none;
+}
+.case-card:hover::before { background: rgba(201,168,76,0.02); }
+.case-card:last-child { border-bottom: 1px solid #1e1c18; }
+
+.case-meta {}
+.case-num {
+  font-family: var(--ff-mono);
+  font-size: 11px;
+  letter-spacing: 3px;
+  color: var(--gold);
+  margin-bottom: 16px;
+}
+.case-client {
+  font-size: 13px;
+  color: var(--mist);
+  margin-bottom: 4px;
+  font-family: var(--ff-mono);
+  letter-spacing: 1px;
+}
+.case-period {
+  font-size: 12px;
+  color: #3a3630;
+  font-family: var(--ff-mono);
+  margin-bottom: 24px;
+}
+.case-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.case-tag {
+  font-family: var(--ff-mono);
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 4px 8px;
+  background: #121008;
+  border: 1px solid #2a2520;
+  color: #4a4540;
+}
+
+.case-body {}
+.case-title {
+  font-family: var(--ff-head);
+  font-size: clamp(24px, 3vw, 34px);
+  font-weight: 700;
+  color: var(--paper);
+  line-height: 1.2;
+  margin-bottom: 20px;
+  transition: color 0.2s;
+}
+.case-card:hover .case-title { color: var(--gold-light); }
+.case-desc {
+  font-size: 15px;
+  color: #6a6560;
+  line-height: 1.8;
+  margin-bottom: 28px;
+}
+.case-desc strong { color: #9a9490; font-weight: 500; }
+
+.case-metrics {
+  display: flex;
+  gap: 32px;
+  padding: 20px 0;
+  border-top: 1px solid #1a1814;
+  border-bottom: 1px solid #1a1814;
+  margin-bottom: 24px;
+}
+.case-metric {}
+.case-metric-num {
+  font-family: var(--ff-head);
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--gold);
+  display: block;
+}
+.case-metric-label {
+  font-family: var(--ff-mono);
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #3a3630;
+  display: block;
+}
+
+.case-approach {
+  font-family: var(--ff-mono);
+  font-size: 11px;
+  color: #4a4540;
+  line-height: 1.8;
+}
+.case-approach strong { color: var(--gold); display: block; margin-bottom: 8px; letter-spacing: 2px; font-size: 9px; text-transform: uppercase; }
+
+/* ── API DOCS SECTION ────────────────────────────────────────────────── */
+#api-docs {
+  padding: 120px 0;
+  background: #080807;
+  border-top: 1px solid #1a1814;
+  border-bottom: 1px solid #1a1814;
+}
+.api-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: start;
+}
+.api-intro {}
+.api-sample {
+  background: #050504;
+  border: 1px solid #1e1c18;
+  border-radius: 2px;
+  overflow: hidden;
+}
+.api-sample-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 20px;
+  background: #0a0a08;
+  border-bottom: 1px solid #1e1c18;
+}
+.api-method {
+  font-family: var(--ff-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 2px;
+  padding: 3px 8px;
+  background: rgba(181,69,27,0.15);
+  color: var(--rust);
+  border: 1px solid rgba(181,69,27,0.3);
+}
+.api-method.get {
+  background: rgba(74,160,80,0.12);
+  color: #4aa050;
+  border-color: rgba(74,160,80,0.25);
+}
+.api-method.post {
+  background: rgba(201,168,76,0.1);
+  color: var(--gold);
+  border-color: rgba(201,168,76,0.25);
+}
+.api-endpoint {
+  font-family: var(--ff-mono);
+  font-size: 11px;
+  color: #4a4540;
+  letter-spacing: 1px;
+}
+.api-code {
+  padding: 24px 20px;
+  font-family: var(--ff-mono);
+  font-size: 12px;
+  line-height: 1.9;
+  color: #5a5550;
+  overflow-x: auto;
+}
+.api-code .key   { color: #7a9a7a; }
+.api-code .val   { color: #9a8060; }
+.api-code .str   { color: #8a9a6a; }
+.api-code .num   { color: var(--gold); }
+.api-code .type  { color: var(--rust); }
+.api-code .cm    { color: #3a3630; font-style: italic; }
+
+.api-feature-list { list-style: none; margin-top: 32px; }
+.api-feature-list li {
+  font-size: 14px;
+  color: #6a6560;
+  padding: 14px 0;
+  border-bottom: 1px solid #121008;
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+.api-feature-list li::before {
+  content: '→';
+  font-family: var(--ff-mono);
+  color: var(--gold);
+  font-size: 12px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+/* ── USER MANUALS ────────────────────────────────────────────────────── */
+#manuals { padding: 120px 0; }
+.manuals-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: #1a1814;
+  border: 1px solid #1a1814;
+  margin-top: 60px;
+}
+.manual-card {
+  background: var(--ink);
+  padding: 40px 32px;
+  transition: background 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+.manual-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--gold);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.4s cubic-bezier(0.22,1,0.36,1);
+}
+.manual-card:hover { background: #0c0b09; }
+.manual-card:hover::after { transform: scaleX(1); }
+.manual-icon {
+  font-size: 28px;
+  margin-bottom: 24px;
+  display: block;
+}
+.manual-num {
+  font-family: var(--ff-mono);
+  font-size: 9px;
+  letter-spacing: 3px;
+  color: var(--gold);
+  margin-bottom: 12px;
+}
+.manual-title {
+  font-family: var(--ff-head);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--paper);
+  margin-bottom: 12px;
+  line-height: 1.2;
+}
+.manual-desc {
+  font-size: 13px;
+  color: #5a5550;
+  line-height: 1.7;
+  margin-bottom: 20px;
+}
+.manual-tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+.manual-tool {
+  font-family: var(--ff-mono);
+  font-size: 9px;
+  letter-spacing: 1.5px;
+  padding: 3px 7px;
+  border: 1px solid #1e1c18;
+  color: #3a3630;
+}
+
+/* ── ARTICLES ────────────────────────────────────────────────────────── */
+#articles {
+  padding: 120px 0;
+  background: #060605;
+  border-top: 1px solid #1a1814;
+}
+.articles-masthead {
+  text-align: center;
+  margin-bottom: 80px;
+  position: relative;
+}
+.masthead-rule {
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--gold), transparent);
+  margin-bottom: 32px;
+}
+.masthead-title {
+  font-family: var(--ff-head);
+  font-size: clamp(48px, 7vw, 96px);
+  font-weight: 900;
+  font-style: italic;
+  color: var(--paper);
+  letter-spacing: -2px;
+  line-height: 0.9;
+}
+.masthead-sub {
+  font-family: var(--ff-mono);
+  font-size: 10px;
+  letter-spacing: 6px;
+  color: var(--mist);
+  text-transform: uppercase;
+  margin-top: 16px;
+}
+
+.articles-layout {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 48px;
+}
+.article-featured {
+  border-top: 3px solid var(--gold);
+  padding-top: 32px;
+}
+.article-cat {
+  font-family: var(--ff-mono);
+  font-size: 9px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 12px;
+}
+.article-title {
+  font-family: var(--ff-head);
+  font-size: clamp(22px, 3vw, 32px);
+  font-weight: 700;
+  color: var(--paper);
+  margin-bottom: 16px;
+  line-height: 1.25;
+}
+.article-excerpt {
+  font-size: 14px;
+  color: #6a6560;
+  line-height: 1.8;
+  margin-bottom: 24px;
+}
+.article-byline {
+  font-family: var(--ff-mono);
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: #3a3630;
+}
+.article-byline span { color: var(--mist); }
+
+.articles-sidebar {}
+.sidebar-article {
+  padding: 24px 0;
+  border-bottom: 1px solid #1a1814;
+}
+.sidebar-article:last-child { border-bottom: none; }
+.sidebar-article-num {
+  font-family: var(--ff-head);
+  font-size: 36px;
+  font-weight: 900;
+  color: #1a1814;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+.sidebar-article-cat {
+  font-family: var(--ff-mono);
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: var(--gold);
+  margin-bottom: 8px;
+}
+.sidebar-article-title {
+  font-family: var(--ff-head);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--paper);
+  line-height: 1.3;
+  margin-bottom: 8px;
+}
+.sidebar-article-excerpt {
+  font-size: 12px;
+  color: #4a4540;
+  line-height: 1.7;
+}
+
+/* ── SKILLS / TOOLS ──────────────────────────────────────────────────── */
+#skills { padding: 120px 0; border-top: 1px solid #1a1814; }
+.skills-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 40px;
+  margin-top: 60px;
+}
+.skill-group {}
+.skill-group-title {
+  font-family: var(--ff-mono);
+  font-size: 9px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--gold);
+  padding-bottom: 12px;
+  border-bottom: 1px solid #1a1814;
+  margin-bottom: 20px;
+}
+.skill-item {
+  font-size: 13px;
+  color: #5a5550;
+  padding: 8px 0;
+  border-bottom: 1px solid #0e0d0b;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: color 0.2s;
+}
+.skill-item:hover { color: var(--paper); }
+.skill-dot {
+  width: 4px; height: 4px;
+  background: var(--gold);
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.skill-item:hover .skill-dot { opacity: 1; }
+
+/* ── CONTACT / FOOTER ────────────────────────────────────────────────── */
+#contact {
+  padding: 120px 0 80px;
+  background: var(--ink);
+  border-top: 1px solid #1a1814;
+}
+.contact-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: end;
+}
+.contact-heading {
+  font-family: var(--ff-head);
+  font-size: clamp(40px, 5vw, 72px);
+  font-weight: 900;
+  line-height: 1.0;
+  color: var(--paper);
+  margin-bottom: 24px;
+}
+.contact-heading em { font-style: italic; color: var(--gold); }
+.contact-sub {
+  font-size: 15px;
+  color: #5a5550;
+  line-height: 1.8;
+}
+.contact-links { display: flex; flex-direction: column; gap: 20px; }
+.contact-link {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  text-decoration: none;
+  color: var(--paper);
+  padding: 20px 24px;
+  border: 1px solid #1e1c18;
+  transition: all 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+.contact-link::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 0;
+  background: rgba(201,168,76,0.06);
+  transition: width 0.4s cubic-bezier(0.22,1,0.36,1);
+}
+.contact-link:hover { border-color: var(--gold); }
+.contact-link:hover::before { width: 100%; }
+.contact-link-icon {
+  font-family: var(--ff-mono);
+  font-size: 14px;
+  color: var(--gold);
+  flex-shrink: 0;
+  position: relative;
+}
+.contact-link-text {}
+.contact-link-label {
+  font-family: var(--ff-mono);
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--mist);
+  display: block;
+}
+.contact-link-value {
+  font-size: 14px;
+  color: var(--paper);
+}
+
+footer {
+  margin-top: 80px;
+  padding-top: 32px;
+  border-top: 1px solid #1a1814;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.footer-copy {
+  font-family: var(--ff-mono);
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: #2a2520;
+}
+.footer-name {
+  font-family: var(--ff-head);
+  font-style: italic;
+  font-size: 16px;
+  color: #2a2520;
+}
+
+/* ── Responsive ──────────────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .hero-inner, .about-grid, .api-grid, .articles-layout, .contact-grid
+  { grid-template-columns: 1fr; }
+  .manuals-grid, .skills-grid { grid-template-columns: 1fr 1fr; }
+  .case-card { grid-template-columns: 1fr; }
+  nav { padding: 16px 20px; }
+  .nav-links { display: none; }
+  .container { padding: 0 20px; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#hero" class="nav-logo">M. <span>Chhabra</span></a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#case-studies">Work</a></li>
+    <li><a href="#api-docs">API Docs</a></li>
+    <li><a href="#articles">Writing</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg-text">CLARITY</div>
+  <div class="hero-inner">
+    <div>
+      <p class="hero-eyebrow">Portfolio — Technical Writer</p>
+      <h1 class="hero-name">
+        Mishika
+        <em>Chhabra.</em>
+      </h1>
+      <div class="hero-title-bar">
+        <p class="hero-role">Technical Writer &nbsp;/&nbsp; CS Graduate &nbsp;/&nbsp; Arizona State University</p>
+      </div>
+    </div>
+    <div class="hero-right">
+      <p class="hero-intro">
+        I turn <strong>complex systems into clear language</strong> — from AI-powered medical imaging platforms to no-code automation tools. With a CS degree and a writer's instincts, I sit at the precise intersection of <strong>engineering and communication</strong>.
+      </p>
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <span class="hero-stat-num">2+</span>
+          <span class="hero-stat-label">Years Writing</span>
+        </div>
+        <div class="hero-stat">
+          <span class="hero-stat-num">30%</span>
+          <span class="hero-stat-label">Review Cycles Cut</span>
+        </div>
+        <div class="hero-stat">
+          <span class="hero-stat-num">1K+</span>
+          <span class="hero-stat-label">Students Mentored</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="ticker-wrap">
+    <div class="ticker-track">
+      <span class="ticker-item"><span>✦</span> API Documentation</span>
+      <span class="ticker-item"><span>✦</span> User Manuals</span>
+      <span class="ticker-item"><span>✦</span> Release Notes</span>
+      <span class="ticker-item"><span>✦</span> Medical Imaging Systems</span>
+      <span class="ticker-item"><span>✦</span> AI Product Guides</span>
+      <span class="ticker-item"><span>✦</span> Developer Portals</span>
+      <span class="ticker-item"><span>✦</span> Software QA Docs</span>
+      <span class="ticker-item"><span>✦</span> Technical Articles</span>
+      <span class="ticker-item"><span>✦</span> API Documentation</span>
+      <span class="ticker-item"><span>✦</span> User Manuals</span>
+      <span class="ticker-item"><span>✦</span> Release Notes</span>
+      <span class="ticker-item"><span>✦</span> Medical Imaging Systems</span>
+      <span class="ticker-item"><span>✦</span> AI Product Guides</span>
+      <span class="ticker-item"><span>✦</span> Developer Portals</span>
+      <span class="ticker-item"><span>✦</span> Software QA Docs</span>
+      <span class="ticker-item"><span>✦</span> Technical Articles</span>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="container">
+    <p class="section-label">About</p>
+    <div class="about-grid">
+      <div class="about-sidebar">
+        <p class="about-sidebar-label">Core Skills</p>
+        <div class="tag-cloud">
+          <span class="tag highlight">Technical Writing</span>
+          <span class="tag highlight">API Docs</span>
+          <span class="tag">Python</span>
+          <span class="tag">React.js</span>
+          <span class="tag highlight">Docs-as-Code</span>
+          <span class="tag">Figma</span>
+          <span class="tag">SQL</span>
+          <span class="tag highlight">UX Writing</span>
+          <span class="tag">Azure DevOps</span>
+          <span class="tag">Docker</span>
+          <span class="tag highlight">Medical Imaging</span>
+          <span class="tag">SEO</span>
+          <span class="tag">WordPress</span>
+          <span class="tag highlight">NLP</span>
+          <span class="tag">AWS</span>
+          <span class="tag">Agile</span>
+        </div>
+
+        <br/><br/>
+        <p class="about-sidebar-label" style="margin-top:8px;">Education</p>
+        <div style="border:1px solid #1a1814;padding:20px;">
+          <p style="font-family:var(--ff-head);font-size:16px;font-weight:700;color:var(--paper);margin-bottom:4px;">B.S. Computer Science</p>
+          <p style="font-family:var(--ff-mono);font-size:10px;color:var(--gold);letter-spacing:1px;margin-bottom:6px;">Arizona State University</p>
+          <p style="font-family:var(--ff-mono);font-size:10px;color:var(--mist);">GPA 3.76 &nbsp;·&nbsp; May 2025</p>
+        </div>
+      </div>
+
+      <div class="about-main">
+        <h2 class="about-heading">
+          Precision lives<br/>
+          where code meets<br/>
+          <em>prose.</em>
+        </h2>
+        <p class="about-text">
+          I'm a Technical Writer with a <strong>Computer Science degree from Arizona State University</strong> — which means I don't just document what engineers build. I understand it. I've shipped documentation for AI-powered medical imaging systems, co-designed no-code QA platforms, and tutored over a thousand students in the craft of clear thinking on paper.
+        </p>
+        <blockquote class="about-pull">
+          "Good documentation doesn't explain a product. It removes every obstacle between a user and their goal."
+        </blockquote>
+        <p class="about-text">
+          At <strong>Novarad (VisAR)</strong>, I built the technical documentation practice from zero — creating product guides, release notes, and documentation pipelines for a clinical-grade augmented reality surgical platform. That work <strong>reduced review cycles by 30%</strong> and earned the trust of engineering leadership to own the written voice of the product.
+        </p>
+        <p class="about-text">
+          I've also contributed as a <strong>software engineer</strong> at Qualaces, built and shipped AI-powered job search platforms, led front-end development, and volunteered as a digital marketer — giving me a rare, full-stack perspective on every product I document.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CASE STUDIES -->
+<section id="case-studies">
+  <div class="container">
+    <div class="case-header">
+      <div>
+        <p class="section-label">Case Studies</p>
+        <h2 class="section-heading">Selected<br/><em>Work.</em></h2>
+      </div>
+      <span class="section-count">03</span>
+    </div>
+
+    <!-- Case 1 -->
+    <div class="case-card">
+      <div class="case-meta">
+        <p class="case-num">01 / 03</p>
+        <p class="case-client">Novarad · VisAR</p>
+        <p class="case-period">Oct 2025 – Feb 2026</p>
+        <div class="case-tags">
+          <span class="case-tag">Medical Tech</span>
+          <span class="case-tag">AR/AI</span>
+          <span class="case-tag">Clinical</span>
+          <span class="case-tag">Regulated</span>
+        </div>
+      </div>
+      <div class="case-body">
+        <h3 class="case-title">Documenting an AI-Powered Surgical AR Platform from the Ground Up</h3>
+        <p class="case-desc">
+          VisAR is an augmented reality surgical navigation system built on <strong>AI-powered medical imaging</strong> — a domain where a single ambiguous sentence can have clinical consequences. I was brought in as the founding technical writer to establish the documentation practice entirely from scratch.
+        </p>
+        <p class="case-desc">
+          Working directly with the CEO and engineering leadership, I translated dense imaging system specifications, ML model behaviors, and clinical workflows into <strong>precise, user-friendly documentation</strong> trusted in operating room environments. I designed the documentation architecture, wrote product guides, authored release notes, and built standardized pipelines that reduced review cycles by 30%.
+        </p>
+        <div class="case-metrics">
+          <div class="case-metric">
+            <span class="case-metric-num">30%</span>
+            <span class="case-metric-label">Review Cycle Reduction</span>
+          </div>
+          <div class="case-metric">
+            <span class="case-metric-num">0→1</span>
+            <span class="case-metric-label">Docs Practice Built</span>
+          </div>
+          <div class="case-metric">
+            <span class="case-metric-num">C-Suite</span>
+            <span class="case-metric-label">Direct Collaboration</span>
+          </div>
+        </div>
+        <div class="case-approach">
+          <strong>Approach & Deliverables</strong>
+          Established documentation taxonomy and naming conventions · Authored clinical product guides for OR staff · Wrote developer-facing release notes and change logs · Built review pipeline with engineering sign-off checkpoints · Standardized terminology for regulatory alignment
+        </div>
+      </div>
+    </div>
+
+    <!-- Case 2 -->
+    <div class="case-card">
+      <div class="case-meta">
+        <p class="case-num">02 / 03</p>
+        <p class="case-client">Qualaces</p>
+        <p class="case-period">Aug 2024 – May 2025</p>
+        <div class="case-tags">
+          <span class="case-tag">AI / NLP</span>
+          <span class="case-tag">QA Tools</span>
+          <span class="case-tag">Jira API</span>
+          <span class="case-tag">No-Code</span>
+        </div>
+      </div>
+      <div class="case-body">
+        <h3 class="case-title">Technical Documentation for a No-Code AI Test Automation Tool</h3>
+        <p class="case-desc">
+          Qualaces built an AI-driven QA platform that generated test cases directly from Jira tickets using NLP — a product with a complex backend and a non-technical target audience. As both a <strong>software engineering contributor and embedded technical communicator</strong>, I had intimate access to the system's architecture.
+        </p>
+        <p class="case-desc">
+          I documented the Jira API integration flows, wrote user-facing guides for the no-code test case editor, and authored developer documentation for the <strong>Python/PostgreSQL backend</strong>. The resulting documentation supported a product that reduced manual QA work by 60% across client teams.
+        </p>
+        <div class="case-metrics">
+          <div class="case-metric">
+            <span class="case-metric-num">60%</span>
+            <span class="case-metric-label">QA Work Reduction</span>
+          </div>
+          <div class="case-metric">
+            <span class="case-metric-num">3</span>
+            <span class="case-metric-label">API Flows Documented</span>
+          </div>
+          <div class="case-metric">
+            <span class="case-metric-num">Dual</span>
+            <span class="case-metric-label">Eng + Writer Role</span>
+          </div>
+        </div>
+        <div class="case-approach">
+          <strong>Approach & Deliverables</strong>
+          Jira API integration reference documentation · NLP test-case generation explainer · No-code UI walkthrough guides · Bug ticket automation workflow diagrams · Backend data model documentation in Python/PostgreSQL context
+        </div>
+      </div>
+    </div>
+
+    <!-- Case 3 -->
+    <div class="case-card">
+      <div class="case-meta">
+        <p class="case-num">03 / 03</p>
+        <p class="case-client">I Am Teen Strong</p>
+        <p class="case-period">May 2025 – Nov 2025</p>
+        <div class="case-tags">
+          <span class="case-tag">Non-Profit</span>
+          <span class="case-tag">SEO</span>
+          <span class="case-tag">Content</span>
+          <span class="case-tag">WordPress</span>
+        </div>
+      </div>
+      <div class="case-body">
+        <h3 class="case-title">Rebuilding a Non-Profit's Digital Voice: Content, SEO & Web Documentation</h3>
+        <p class="case-desc">
+          I Am Teen Strong needed their digital presence to match the urgency of their mission. As a <strong>Digital Marketing and Web Volunteer</strong>, I owned the content strategy, SEO architecture, and site documentation — rewriting copy for clarity, restructuring information hierarchy, and implementing technical SEO improvements that directly measurably improved reach.
+        </p>
+        <p class="case-desc">
+          The work demonstrates a core technical writing principle: <strong>documentation isn't just for software</strong>. Clarity, structure, and audience awareness apply equally to landing pages, Google Ads copy, and web content reaching 5,000+ teenagers.
+        </p>
+        <div class="case-metrics">
+          <div class="case-metric">
+            <span class="case-metric-num">45%</span>
+            <span class="case-metric-label">Engagement Increase</span>
+          </div>
+          <div class="case-metric">
+            <span class="case-metric-num">5K+</span>
+            <span class="case-metric-label">Teens Reached</span>
+          </div>
+          <div class="case-metric">
+            <span class="case-metric-num">30%</span>
+            <span class="case-metric-label">Traffic Boost</span>
+          </div>
+        </div>
+        <div class="case-approach">
+          <strong>Approach & Deliverables</strong>
+          Google Ads copy written and A/B tested · WordPress site content restructured for readability · SEO metadata and schema implemented · Session duration improved 20% via content clarity improvements · Site redesign documentation and style guide created
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- API DOCS -->
+<section id="api-docs">
+  <div class="container">
+    <p class="section-label">API Documentation</p>
+    <div class="api-grid">
+      <div class="api-intro">
+        <h2 class="section-heading">Writing for<br/><em>Developers.</em></h2>
+        <p style="font-size:15px;color:#6a6560;line-height:1.85;margin:28px 0 0;">
+          API documentation sits at the most demanding intersection of technical depth and communicative precision. With a Computer Science background spanning Python, JavaScript, SQL, React, and cloud infrastructure, I write developer docs that are <strong style="color:#9a9490;">accurate by default</strong> — not by accident.
+        </p>
+        <ul class="api-feature-list">
+          <li>Endpoint reference documentation with parameter tables, request/response schemas, and error codes — written from first-hand knowledge of the codebase.</li>
+          <li>Jira API integration guides authored for the Qualaces QA platform, covering authentication, webhook setup, and real-time ticket synchronization.</li>
+          <li>Workflow documentation for AI-generated test case pipelines, bridging NLP concepts and developer implementation steps.</li>
+          <li>Versioned release notes and changelogs following semantic versioning conventions, co-authored with engineering at VisAR.</li>
+          <li>Code examples in Python and JavaScript that are tested, idiomatic, and copy-paste ready.</li>
+        </ul>
+      </div>
+
+      <div>
+        <!-- Sample: GET endpoint -->
+        <div class="api-sample" style="margin-bottom:16px;">
+          <div class="api-sample-header">
+            <span class="api-method get">GET</span>
+            <span class="api-endpoint">/v1/imaging/studies/{studyId}</span>
+          </div>
+          <div class="api-code"><span class="cm">// Retrieve a medical imaging study by ID</span>
+<span class="cm">// Response: 200 OK</span>
+
+{
+  <span class="key">"studyId"</span>:      <span class="str">"study_8f3a92"</span>,
+  <span class="key">"patientRef"</span>:   <span class="str">"anon_4421"</span>,
+  <span class="key">"modality"</span>:     <span class="str">"CT"</span>,
+  <span class="key">"acquisitionDate"</span>: <span class="str">"2026-02-14"</span>,
+  <span class="key">"seriesCount"</span>:  <span class="num">4</span>,
+  <span class="key">"aiAnnotations"</span>: {
+    <span class="key">"enabled"</span>:   <span class="type">true</span>,
+    <span class="key">"model"</span>:     <span class="str">"visar-seg-v2.1"</span>,
+    <span class="key">"confidence"</span>: <span class="num">0.94</span>
+  }
+}</div>
+        </div>
+
+        <!-- Sample: POST endpoint -->
+        <div class="api-sample" style="margin-bottom:16px;">
+          <div class="api-sample-header">
+            <span class="api-method post">POST</span>
+            <span class="api-endpoint">/v1/testcases/generate</span>
+          </div>
+          <div class="api-code"><span class="cm">// Generate test cases from a Jira ticket</span>
+<span class="cm">// Request body</span>
+
+{
+  <span class="key">"jiraTicketId"</span>: <span class="str">"QA-2841"</span>,
+  <span class="key">"projectKey"</span>:  <span class="str">"QUALACES"</span>,
+  <span class="key">"nlpModel"</span>:    <span class="str">"gpt-4-turbo"</span>,
+  <span class="key">"outputFormat"</span>: <span class="str">"gherkin"</span>,
+  <span class="key">"autoLink"</span>:    <span class="type">true</span>
+}
+
+<span class="cm">// Response: 201 Created</span>
+{
+  <span class="key">"testCasesGenerated"</span>: <span class="num">7</span>,
+  <span class="key">"linkedTicket"</span>: <span class="str">"QA-2841"</span>,
+  <span class="key">"previewUrl"</span>:  <span class="str">"https://app.qualaces.io/tc/..."</span>
+}</div>
+        </div>
+
+        <!-- Error table -->
+        <div class="api-sample">
+          <div class="api-sample-header">
+            <span class="api-method">ERROR</span>
+            <span class="api-endpoint">Status Code Reference</span>
+          </div>
+          <div class="api-code">
+<span class="num">400</span>  <span class="key">Bad Request</span>    <span class="cm">— Missing required field</span>
+<span class="num">401</span>  <span class="key">Unauthorized</span>   <span class="cm">— Invalid or expired token</span>
+<span class="num">403</span>  <span class="key">Forbidden</span>      <span class="cm">— Insufficient role permissions</span>
+<span class="num">404</span>  <span class="key">Not Found</span>      <span class="cm">— Resource does not exist</span>
+<span class="num">409</span>  <span class="key">Conflict</span>       <span class="cm">— Duplicate studyId detected</span>
+<span class="num">500</span>  <span class="key">Server Error</span>   <span class="cm">— Contact support@visar.io</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- USER MANUALS -->
+<section id="manuals">
+  <div class="container">
+    <p class="section-label">User Manuals</p>
+    <h2 class="section-heading">Built for<br/><em>Real Users.</em></h2>
+    <div class="manuals-grid">
+
+      <div class="manual-card">
+        <span class="manual-icon">🔬</span>
+        <p class="manual-num">Manual 01</p>
+        <h3 class="manual-title">VisAR Surgical Navigation — Clinical User Guide</h3>
+        <p class="manual-desc">
+          A full end-to-end clinical guide covering device setup, imaging overlay configuration, AI annotation interpretation, and intraoperative workflow. Written for surgeons and OR technicians — zero assumed engineering knowledge.
+        </p>
+        <div class="manual-tools">
+          <span class="manual-tool">Adobe InDesign</span>
+          <span class="manual-tool">Clinical QA Review</span>
+          <span class="manual-tool">AI/AR Systems</span>
+        </div>
+      </div>
+
+      <div class="manual-card">
+        <span class="manual-icon">🤖</span>
+        <p class="manual-num">Manual 02</p>
+        <h3 class="manual-title">Qualaces QA Platform — No-Code User Onboarding Guide</h3>
+        <p class="manual-desc">
+          Onboarding documentation for QA professionals using a no-code AI tool to auto-generate test cases. Covers Jira integration setup, NLP configuration, test case review workflows, and bug ticket automation.
+        </p>
+        <div class="manual-tools">
+          <span class="manual-tool">Markdown</span>
+          <span class="manual-tool">Confluence</span>
+          <span class="manual-tool">Jira API</span>
+        </div>
+      </div>
+
+      <div class="manual-card">
+        <span class="manual-icon">💼</span>
+        <p class="manual-num">Manual 03</p>
+        <h3 class="manual-title">Jobque.ai — Platform Reference Manual</h3>
+        <p class="manual-desc">
+          Complete reference documentation for an AI-powered job search platform. Covers keyword matching configuration, data source integration, filtering algorithms, and search result interpretation for end users.
+        </p>
+        <div class="manual-tools">
+          <span class="manual-tool">React Docs</span>
+          <span class="manual-tool">Python Backend</span>
+          <span class="manual-tool">UX Writing</span>
+        </div>
+      </div>
+
+      <div class="manual-card">
+        <span class="manual-icon">📊</span>
+        <p class="manual-num">Manual 04</p>
+        <h3 class="manual-title">WordPress SEO & Content Operations — Internal Playbook</h3>
+        <p class="manual-desc">
+          An internal-facing documentation playbook for I Am Teen Strong's content and SEO operations. Covers Google Ads campaign structure, site editing standards, SEO checklist, and readability guidelines.
+        </p>
+        <div class="manual-tools">
+          <span class="manual-tool">WordPress</span>
+          <span class="manual-tool">Google Ads</span>
+          <span class="manual-tool">SEO</span>
+        </div>
+      </div>
+
+      <div class="manual-card">
+        <span class="manual-icon">✍️</span>
+        <p class="manual-num">Manual 05</p>
+        <h3 class="manual-title">ASU Writing Center — Student Essay Revision Framework</h3>
+        <p class="manual-desc">
+          A structured revision guide used during 1,000+ tutoring sessions at Arizona State University. Distills brainstorming, outlining, drafting, and revision techniques into a repeatable framework for undergraduate writers.
+        </p>
+        <div class="manual-tools">
+          <span class="manual-tool">Curriculum Design</span>
+          <span class="manual-tool">Education</span>
+          <span class="manual-tool">1:1 Coaching</span>
+        </div>
+      </div>
+
+      <div class="manual-card">
+        <span class="manual-icon">⚡</span>
+        <p class="manual-num">Manual 06</p>
+        <h3 class="manual-title">Front-End Performance — Developer Quick Reference</h3>
+        <p class="manual-desc">
+          A developer-facing quick reference guide on front-end optimization techniques, distilled from hands-on experience improving page load speeds by 30% at Techno Tym. Covers lazy loading, CSS optimization, and bundle analysis.
+        </p>
+        <div class="manual-tools">
+          <span class="manual-tool">CSS / JS</span>
+          <span class="manual-tool">HTML</span>
+          <span class="manual-tool">DevTools</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ARTICLES -->
+<section id="articles">
+  <div class="container">
+    <div class="articles-masthead">
+      <div class="masthead-rule"></div>
+      <h2 class="masthead-title">The Write</h2>
+      <p class="masthead-sub">Industry Articles &amp; Technical Essays by Mishika Chhabra</p>
+    </div>
+
+    <div class="articles-layout">
+      <div class="article-featured">
+        <p class="article-cat">AI &amp; Documentation</p>
+        <h3 class="article-title">Why Every AI Product Needs a Technical Writer in the Room Before Launch</h3>
+        <p class="article-excerpt">
+          AI systems fail users not because the model is wrong — but because no one translated what the model is doing into language the user can act on. After spending months documenting an AI-powered surgical platform, I've seen first-hand how documentation debt compounds in clinical environments. This piece argues for embedding technical writers in the AI development cycle from day one, not as a post-launch afterthought.
+        </p>
+        <p class="article-excerpt">
+          The problem is structural. Engineering teams optimize for shipping. QA teams optimize for coverage. But the question "will a nurse in an operating room understand this error message?" belongs to a technical writer — and when that role is absent, the answer is almost always no.
+        </p>
+        <p class="article-byline">By <span>Mishika Chhabra</span> &nbsp;·&nbsp; Technical Writing &nbsp;·&nbsp; 8 min read</p>
+      </div>
+
+      <div class="articles-sidebar">
+        <div class="sidebar-article">
+          <p class="sidebar-article-num">02</p>
+          <p class="sidebar-article-cat">Software Engineering</p>
+          <h4 class="sidebar-article-title">Docs-as-Code: How Treating Documentation Like Software Changed My Workflow</h4>
+          <p class="sidebar-article-excerpt">Version control, pull requests, and CI pipelines aren't just for engineers. Here's how applying Git-based documentation workflows cut review time and improved consistency across my deliverables.</p>
+        </div>
+
+        <div class="sidebar-article">
+          <p class="sidebar-article-num">03</p>
+          <p class="sidebar-article-cat">UX &amp; Content Strategy</p>
+          <h4 class="sidebar-article-title">The 20% Grade Improvement Secret: What 1,000 Writing Sessions Taught Me About Clarity</h4>
+          <p class="sidebar-article-excerpt">After tutoring over a thousand students at ASU, one pattern became undeniable: most writing problems aren't grammar problems. They're structural. The same insight applies directly to technical documentation.</p>
+        </div>
+
+        <div class="sidebar-article">
+          <p class="sidebar-article-num">04</p>
+          <p class="sidebar-article-cat">API Documentation</p>
+          <h4 class="sidebar-article-title">What Makes an API Reference Actually Readable? Lessons from Writing for Engineers</h4>
+          <p class="sidebar-article-excerpt">Most API docs are complete — but not readable. Here's the difference between a reference that developers bookmark and one they abandon after the first 404 error.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="container">
+    <p class="section-label">Skills &amp; Tools</p>
+    <h2 class="section-heading">The Full<br/><em>Stack.</em></h2>
+    <div class="skills-grid">
+      <div class="skill-group">
+        <p class="skill-group-title">Writing &amp; Docs</p>
+        <div class="skill-item">Technical Writing <span class="skill-dot"></span></div>
+        <div class="skill-item">API Documentation <span class="skill-dot"></span></div>
+        <div class="skill-item">UX Writing <span class="skill-dot"></span></div>
+        <div class="skill-item">Release Notes <span class="skill-dot"></span></div>
+        <div class="skill-item">User Manuals <span class="skill-dot"></span></div>
+        <div class="skill-item">Style Guides <span class="skill-dot"></span></div>
+        <div class="skill-item">SEO Content <span class="skill-dot"></span></div>
+      </div>
+      <div class="skill-group">
+        <p class="skill-group-title">Languages</p>
+        <div class="skill-item">Python <span class="skill-dot"></span></div>
+        <div class="skill-item">JavaScript <span class="skill-dot"></span></div>
+        <div class="skill-item">Java <span class="skill-dot"></span></div>
+        <div class="skill-item">C++ <span class="skill-dot"></span></div>
+        <div class="skill-item">SQL <span class="skill-dot"></span></div>
+        <div class="skill-item">HTML / CSS <span class="skill-dot"></span></div>
+        <div class="skill-item">MATLAB <span class="skill-dot"></span></div>
+      </div>
+      <div class="skill-group">
+        <p class="skill-group-title">Frameworks &amp; Tools</p>
+        <div class="skill-item">React.js <span class="skill-dot"></span></div>
+        <div class="skill-item">Node.js <span class="skill-dot"></span></div>
+        <div class="skill-item">Django / Spring Boot <span class="skill-dot"></span></div>
+        <div class="skill-item">Docker <span class="skill-dot"></span></div>
+        <div class="skill-item">Azure DevOps <span class="skill-dot"></span></div>
+        <div class="skill-item">AWS / Azure <span class="skill-dot"></span></div>
+        <div class="skill-item">Figma <span class="skill-dot"></span></div>
+      </div>
+      <div class="skill-group">
+        <p class="skill-group-title">Design &amp; Content</p>
+        <div class="skill-item">Adobe InDesign <span class="skill-dot"></span></div>
+        <div class="skill-item">Microsoft Word <span class="skill-dot"></span></div>
+        <div class="skill-item">WordPress <span class="skill-dot"></span></div>
+        <div class="skill-item">Google Ads <span class="skill-dot"></span></div>
+        <div class="skill-item">MySQL / PostgreSQL <span class="skill-dot"></span></div>
+        <div class="skill-item">MongoDB <span class="skill-dot"></span></div>
+        <div class="skill-item">Jira / Confluence <span class="skill-dot"></span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="container">
+    <p class="section-label">Contact</p>
+    <div class="contact-grid">
+      <div>
+        <h2 class="contact-heading">
+          Let's make<br/>something<br/><em>clear.</em>
+        </h2>
+        <p class="contact-sub">
+          Whether you're building an AI product that needs a clinical-grade voice, a developer platform that needs readable API docs, or a team that needs documentation infrastructure built from scratch — I'm the writer who also knows how to read the source code.
+        </p>
+      </div>
+      <div class="contact-links">
+        <a href="mailto:mishikac04@gmail.com" class="contact-link">
+          <span class="contact-link-icon">@</span>
+          <div class="contact-link-text">
+            <span class="contact-link-label">Email</span>
+            <span class="contact-link-value">mishikac04@gmail.com</span>
+          </div>
+        </a>
+        <a href="tel:+16025767963" class="contact-link">
+          <span class="contact-link-icon">↗</span>
+          <div class="contact-link-text">
+            <span class="contact-link-label">Phone</span>
+            <span class="contact-link-value">+1 (602) 576-7963</span>
+          </div>
+        </a>
+        <a href="https://linkedin.com/in/mishika-chhabra/" target="_blank" class="contact-link">
+          <span class="contact-link-icon">in</span>
+          <div class="contact-link-text">
+            <span class="contact-link-label">LinkedIn</span>
+            <span class="contact-link-value">linkedin.com/in/mishika-chhabra</span>
+          </div>
+        </a>
+        <a href="#" class="contact-link">
+          <span class="contact-link-icon">↓</span>
+          <div class="contact-link-text">
+            <span class="contact-link-label">Resume</span>
+            <span class="contact-link-value">Download PDF</span>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <footer>
+      <p class="footer-copy">© 2026 Mishika Chhabra · All Rights Reserved</p>
+      <p class="footer-name">Mishika Chhabra</p>
+    </footer>
+  </div>
+</section>
+
+<script>
+// Smooth active nav highlighting
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('.nav-links a');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      navLinks.forEach(a => {
+        a.style.color = a.getAttribute('href') === '#' + entry.target.id
+          ? 'var(--gold)' : '';
+      });
+    }
+  });
+}, { threshold: 0.3 });
+sections.forEach(s => observer.observe(s));
+
+// Staggered card reveal on scroll
+const cards = document.querySelectorAll(
+  '.case-card, .manual-card, .sidebar-article, .hero-stat, .skill-group'
+);
+const cardObserver = new IntersectionObserver((entries) => {
+  entries.forEach((entry, i) => {
+    if (entry.isIntersecting) {
+      entry.target.style.animation = `fadeUp 0.7s cubic-bezier(0.22,1,0.36,1) both`;
+      entry.target.style.opacity = '1';
+      cardObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.1 });
+cards.forEach((c, i) => {
+  c.style.opacity = '0';
+  c.style.animationDelay = `${i * 50}ms`;
+  cardObserver.observe(c);
+});
+
+// Hover glow on case cards
+document.querySelectorAll('.case-card').forEach(card => {
+  card.addEventListener('mouseenter', () => {
+    card.style.paddingLeft = '12px';
+    card.style.borderLeftColor = 'var(--gold)';
+    card.style.transition = 'padding 0.3s ease, border-color 0.3s ease';
+  });
+  card.addEventListener('mouseleave', () => {
+    card.style.paddingLeft = '0';
+    card.style.borderLeftColor = 'transparent';
+  });
+});
+</script>
+</body>
+</html>
